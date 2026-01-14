@@ -1,0 +1,39 @@
+.table-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  img{
+    width: 10rem;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }
+}
+
+.result-table {
+  border-collapse: collapse;
+  width: 100%;
+
+  th,
+  td {
+    border: 1px solid var(--color-main-accent);
+    padding: 0.5rem;
+    text-align: left;
+  }
+
+  th:first-of-type {
+    width: 20%;
+  }
+
+  th:nth-of-type(2) {
+    width: 20%;
+  }
+
+  th:nth-of-type(3) {
+    width: 30%;
+  }
+
+  th:nth-of-type(4) {
+    width: 30%;
+  }
+}

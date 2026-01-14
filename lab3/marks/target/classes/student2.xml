@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE student SYSTEM "student.dtd">
+<student lastname="Петров">
+  <subject title="Математика" mark="3" />
+  <subject title="Физика" mark="4" />
+  <subject title="Программирование" mark="5" />
+  <subject title="Английский" mark="4" />
+  <average>4.5</average>
+</student>
