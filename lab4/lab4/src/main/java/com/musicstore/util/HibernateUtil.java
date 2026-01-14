@@ -1,52 +1,37 @@
 package com.musicstore.util;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import com.musicstore.entity.*;
+import org.hibernate.cfg.Configuration;
+
+import com.musicstore.entity.Album;
+import com.musicstore.entity.Artist;
+import com.musicstore.entity.Track;
 
 public class HibernateUtil {
-  private static StandardServiceRegistry registry;
-  private static SessionFactory sessionFactory;
-
-  public static SessionFactory getSessionFactory() {
-    if (sessionFactory == null) {
-      try {
-        registry = new StandardServiceRegistryBuilder()
-            .configure("hibernate.cfg.xml") // Ищет в classpath
-            .build();
-
-        MetadataSources sources = new MetadataSources(registry);
-        sources.addAnnotatedClass(Artist.class);
-        sources.addAnnotatedClass(Album.class);
-        sources.addAnnotatedClass(Track.class);
-
-        Metadata metadata = sources.getMetadataBuilder().build();
-        sessionFactory = metadata.getSessionFactoryBuilder().build();
-
-        System.out.println("SessionFactory создана успешно");
-
-      } catch (Exception e) {
-        System.err.println("Ошибка создания SessionFactory:");
-        e.printStackTrace();
-        if (registry != null) {
-          StandardServiceRegistryBuilder.destroy(registry);
+    private static SessionFactory sessionFactory;
+    
+    static {
+        try {
+            Configuration configuration = new Configuration();
+            configuration.configure("hibernate.cfg.xml");
+            
+            // Регистрируем entity классы
+            configuration.addAnnotatedClass(Artist.class);
+            configuration.addAnnotatedClass(Album.class);
+            configuration.addAnnotatedClass(Track.class);
+            
+            sessionFactory = configuration.buildSessionFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ExceptionInInitializerError(e);
         }
-        throw new ExceptionInInitializerError("Не удалось инициализировать Hibernate");
-      }
     }
-    return sessionFactory;
-  }
-
-  public static void shutdown() {
-    if (sessionFactory != null && !sessionFactory.isClosed()) {
-      sessionFactory.close();
-      System.out.println("SessionFactory закрыта");
+    
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
-    if (registry != null) {
-      StandardServiceRegistryBuilder.destroy(registry);
+    
+    public static void shutdown() {
+        getSessionFactory().close();
     }
-  }
 }

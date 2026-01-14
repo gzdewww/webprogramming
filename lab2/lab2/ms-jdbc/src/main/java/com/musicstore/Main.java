@@ -4,7 +4,6 @@ import com.musicstore.db.DatabaseConnection;
 import com.musicstore.tasks.Task1Executor;
 import com.musicstore.tasks.Task2Executor;
 import com.musicstore.tasks.Task3Executor;
-
 import java.sql.Connection;
 import java.util.Scanner;
 
@@ -16,7 +15,7 @@ public class Main {
 
         // Проверяем подключение
         if (!DatabaseConnection.testConnection()) {
-            System.err.println("❌ Не удалось подключиться к базе данных!");
+            System.err.println(" Не удалось подключиться к базе данных!");
             System.err.println("   Проверьте параметры в DatabaseConnection.java");
             System.err.println("   и убедитесь, что сервер PostgreSQL запущен.");
             return;
@@ -28,7 +27,7 @@ public class Main {
         try {
             // Создаём одно подключение на всё приложение
             connection = DatabaseConnection.getConnection();
-            System.out.println("✅ Подключение к базе данных установлено\n");
+            System.out.println(" Подключение к базе данных установлено\n");
 
             boolean running = true;
 
@@ -50,7 +49,7 @@ public class Main {
                 try {
                     choice = Integer.parseInt(scanner.nextLine());
                 } catch (NumberFormatException e) {
-                    System.out.println("\n❌ Введите число от 0 до 4");
+                    System.out.println("\n Введите число от 0 до 4");
                     waitForEnter(scanner);
                     continue;
                 }
@@ -73,13 +72,13 @@ public class Main {
                         running = false;
                         break;
                     default:
-                        System.out.println("\n❌ Неверный выбор. Введите число от 0 до 4");
+                        System.out.println("\n  Неверный выбор. Введите число от 0 до 4");
                         waitForEnter(scanner);
                 }
             }
 
         } catch (Exception e) {
-            System.err.println("\n❌ Критическая ошибка: " + e.getMessage());
+            System.err.println("\n  Критическая ошибка: " + e.getMessage());
             e.printStackTrace();
         } finally {
             // Закрываем подключение и сканер
@@ -127,7 +126,7 @@ public class Main {
         executeTask3(connection, new Scanner(System.in));
         waitForEnter(scanner);
 
-        System.out.println("\n✅ Все задания лабораторной работы выполнены!");
+        System.out.println("\n Все задания лабораторной работы выполнены!");
     }
 
     private static void clearConsole() {

@@ -1,14 +1,20 @@
 package com.musicstore;
 
-import com.musicstore.entity.*;
-import com.musicstore.util.HibernateUtil;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import java.util.List;
-import java.time.Duration;
+
+import com.musicstore.entity.Album;
+import com.musicstore.entity.Artist;
+import com.musicstore.entity.Track;
+import com.musicstore.util.HibernateUtil;
 
 public class Main {
+
     public static void main(String[] args) {
         System.out.println("=== Лабораторная работа №4: Hibernate ===");
         System.out.println("Цель: Демонстрация CRUD операций (Create, Read, Update, Delete)\n");
@@ -45,6 +51,9 @@ public class Main {
             System.out.println("----------------------------------");
 
             displayStatistics(sessionFactory);
+
+            // === ЧАСТЬ 6: ЗАПРОС ИЗ ЛР1 ===
+            demonstrateDurationQuery(sessionFactory);
 
         } catch (Exception e) {
             System.err.println("Ошибка: " + e.getMessage());
@@ -110,7 +119,7 @@ public class Main {
                     "FROM Artist ORDER BY name", Artist.class).list();
             System.out.println("Исполнители:");
             for (Artist a : artists) {
-                System.out.println("  • " + a.getName());
+                System.out.println(" •" + a.getName());
             }
 
             // Альбомы
@@ -118,8 +127,8 @@ public class Main {
                     "FROM Album ORDER BY title", Album.class).list();
             System.out.println("\nАльбомы:");
             for (Album a : albums) {
-                System.out.println("  • " + a.getTitle() + " (" + a.getGenre() +
-                        ") - " + a.getArtist().getName());
+                System.out.println("  • " + a.getTitle() + " (" + a.getGenre()
+                        + ") - " + a.getArtist().getName());
             }
 
             // Треки
@@ -127,9 +136,9 @@ public class Main {
                     "FROM Track ORDER BY title", Track.class).list();
             System.out.println("\nТреки:");
             for (Track t : tracks) {
-                System.out.println("  • " + t.getTitle() + " - " +
-                        t.getAlbum().getTitle() + " (" + t.getDuration().toMinutes() +
-                        ":" + String.format("%02d", t.getDuration().getSeconds() % 60) + ")");
+                System.out.println("  • " + t.getTitle() + " - "
+                        + t.getAlbum().getTitle() + " (" + t.getDuration().toMinutes()
+                        + ":" + String.format("%02d", t.getDuration().getSeconds() % 60) + ")");
             }
         }
     }
@@ -145,8 +154,8 @@ public class Main {
                     .uniqueResult();
 
             if (track != null) {
-                System.out.println("Найден трек: " + track.getTitle() +
-                        " (ID: " + track.getId() + ")");
+                System.out.println("Найден трек: " + track.getTitle()
+                        + " (ID: " + track.getId() + ")");
 
                 track.setTitle(newTitle);
                 // Парсим строку "MM:SS" в Duration
@@ -157,8 +166,8 @@ public class Main {
                 session.merge(track);
                 tx.commit();
 
-                System.out.println("✓ Обновлено: '" + oldTitle + "' → '" + newTitle +
-                        "' (" + newDuration + ")");
+                System.out.println("✓ Обновлено: '" + oldTitle + "' → '" + newTitle
+                        + "' (" + newDuration + ")");
             } else {
                 System.out.println("Трек '" + oldTitle + "' не найден");
             }
@@ -175,8 +184,8 @@ public class Main {
                     .uniqueResult();
 
             if (artist != null) {
-                System.out.println("Удаляем исполнителя: " + artist.getName() +
-                        " (ID: " + artist.getId() + ")");
+                System.out.println("Удаляем исполнителя: " + artist.getName()
+                        + " (ID: " + artist.getId() + ")");
                 System.out.println("Примечание: Каскадно удалятся все альбомы и треки");
 
                 session.remove(artist);
@@ -216,6 +225,50 @@ public class Main {
                 System.out.println("  • Альбом: " + updated.getAlbum().getTitle());
                 System.out.println("  • Исполнитель: " + updated.getAlbum().getArtist().getName());
             }
+        }
+    }
+
+    private static void demonstrateDurationQuery(SessionFactory sessionFactory) {
+        System.out.println("\n6. ЗАПРОС ПО ДЛИТЕЛЬНОСТИ ТРЕКОВ");
+        System.out.println("---------------------------------");
+
+        try (Session session = sessionFactory.openSession()) {
+            // Параметры: треки НЕ между 5 и 10 минутами (в секундах)
+            long minSeconds = 5 * 60;  // 300 секунд
+            long maxSeconds = 10 * 60; // 600 секунд
+
+            System.out.println("Параметры: НЕ между 5 и 10 минутами\n");
+
+            // Получаем все треки
+            List<Track> allTracks = session.createQuery("FROM Track", Track.class).list();
+
+            // Фильтруем
+            List<Track> filteredTracks = new ArrayList<>();
+            for (Track track : allTracks) {
+                Duration duration = track.getDuration();
+                if (duration != null) {
+                    long totalSeconds = duration.getSeconds();
+                    if (totalSeconds < minSeconds || totalSeconds > maxSeconds) {
+                        filteredTracks.add(track);
+                    }
+                }
+            }
+
+            // Вывод результатов
+            if (filteredTracks.isEmpty()) {
+                System.out.println("Треков вне диапазона не найдено.");
+            } else {
+                System.out.println("Найдено треков: " + filteredTracks.size());
+                for (Track track : filteredTracks) {
+                    Duration d = track.getDuration();
+                    // Форматируем длительность в минуты и секунды
+                    String durationStr = String.format("%d:%02d",
+                            d.toMinutes(), d.getSeconds() % 60);
+                    System.out.println("  - " + track.getTitle() + " (" + durationStr + ")");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Ошибка: " + e.getMessage());
         }
     }
 }

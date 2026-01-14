@@ -1,0 +1,6 @@
+com\musicstore\TestConnection.class
+com\musicstore\entity\Album.class
+com\musicstore\Main.class
+com\musicstore\entity\Artist.class
+com\musicstore\util\HibernateUtil.class
+com\musicstore\entity\Track.class

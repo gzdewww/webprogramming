@@ -3,12 +3,11 @@ package com.musicstore.ui;
 import com.musicstore.db.AlbumRepository;
 import com.musicstore.db.ArtistRepository;
 import com.musicstore.db.TrackRepository;
-
-import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.*;
 
 public class Task2Panel extends JPanel {
   private Connection connection;
@@ -158,9 +157,9 @@ public class Task2Panel extends JPanel {
       }
       outputArea.append("✓ Запрос выполнен успешно\n");
     } catch (SQLException e) {
-      outputArea.append("❌ Ошибка: " + e.getMessage() + "\n");
+      outputArea.append("  Ошибка: " + e.getMessage() + "\n");
     } catch (Exception e) {
-      outputArea.append("❌ Ошибка выполнения: " + e.getMessage() + "\n");
+      outputArea.append("  Ошибка выполнения: " + e.getMessage() + "\n");
     }
   }
 }

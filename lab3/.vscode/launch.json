@@ -18,8 +18,7 @@
       "projectName": "marks",
       "cwd": "${workspaceFolder}/marks",
       "args": [
-        "src/main/resources/student.xml",
-        "src/main/resources/student_corrected.xml"
+        "student2.xml",
       ]
     }
   ]

@@ -1,13 +1,12 @@
 package com.musicstore.ui;
 
 import com.musicstore.db.MetadataService;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class Task3Panel extends JPanel {
   private Connection connection;
@@ -157,6 +156,6 @@ public class Task3Panel extends JPanel {
   }
 
   private void showError(String message) {
-    outputArea.append("❌ " + message + "\n");
+    outputArea.append("  " + message + "\n");
   }
 }
